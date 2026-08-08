@@ -6,6 +6,9 @@ const envSchema = z.object({
   STATBOTICS_API_BASE: z.string().url().default("https://api.statbotics.io/v3"),
   TEAM_NUMBER: z.coerce.number().int().positive().default(5090),
   SESSION_SECRET: z.string().min(16),
+  // Optional: powers the "analyze recorded video" AI draft feature. Without it, that
+  // one endpoint returns a clear "not configured" error — everything else still works.
+  ANTHROPIC_API_KEY: z.string().optional(),
   PORT: z.coerce.number().int().positive().default(3000),
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
   COOKIE_DOMAIN: z.string().optional(),

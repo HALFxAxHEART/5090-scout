@@ -29,3 +29,28 @@ export const submitScoutingRecordSchema = z.object({
   clientCreatedAt: z.string(), // ISO timestamp
 });
 export type SubmitScoutingRecordInput = z.infer<typeof submitScoutingRecordSchema>;
+
+/**
+ * Frames sampled client-side from a locally recorded match clip, sent for an AI-drafted
+ * first pass at the scoring form. Only the sampled frames leave the device — the
+ * recording itself is never uploaded.
+ */
+export const analyzeVideoFrameSchema = z.object({
+  base64: z.string().min(1), // raw base64 JPEG bytes, no data: prefix
+  timestampSeconds: z.number().nonnegative(),
+});
+
+export const analyzeVideoInputSchema = z.object({
+  matchKey: z.string(),
+  scoutedTeamKey: z.string(),
+  allianceColor: z.enum(["red", "blue"]),
+  station: z.number().int().min(1).max(3),
+  frames: z.array(analyzeVideoFrameSchema).min(1).max(30),
+});
+export type AnalyzeVideoInput = z.infer<typeof analyzeVideoInputSchema>;
+
+export const analyzeVideoResultSchema = z.object({
+  data: z.record(z.string(), scoutingDataValueSchema),
+  notes: z.string(),
+});
+export type AnalyzeVideoResult = z.infer<typeof analyzeVideoResultSchema>;

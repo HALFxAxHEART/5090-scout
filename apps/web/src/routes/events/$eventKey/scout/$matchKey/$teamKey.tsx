@@ -4,11 +4,13 @@ import { useEffect, useRef, useState } from "react";
 import type { SubmitScoutingRecordInput } from "@scout5090/shared";
 import { useTRPC, useTRPCClient } from "../../../../../lib/trpc";
 import { useCurrentUser } from "../../../../../lib/auth-client";
-import { getRecord } from "../../../../../lib/local-db";
+import { getLocalClip, getRecord, saveLocalClip } from "../../../../../lib/local-db";
 import { stableRecordId } from "../../../../../lib/ids";
 import { DynamicScoutForm, type ScoutingData } from "../../../../../features/scouting/DynamicScoutForm";
 import { VideoPanel, type VideoPanelHandle } from "../../../../../features/scouting/VideoPanel";
 import { useScoutingSubmit } from "../../../../../features/scouting/useScoutingSubmit";
+import { CameraRecorder } from "../../../../../features/scouting/CameraRecorder";
+import { extractFrames } from "../../../../../features/scouting/frameExtractor";
 
 export const Route = createFileRoute("/events/$eventKey/scout/$matchKey/$teamKey")({
   component: ScoutMatchPage,
@@ -35,7 +37,13 @@ function ScoutMatchPage() {
   const [draftLoaded, setDraftLoaded] = useState(false);
   const videoRef = useRef<VideoPanelHandle>(null);
 
+  const [clipBlob, setClipBlob] = useState<Blob | null>(null);
+  const [clipPreviewUrl, setClipPreviewUrl] = useState<string | null>(null);
+  const [aiStatus, setAiStatus] = useState<"idle" | "analyzing" | "done" | "error">("idle");
+  const [aiError, setAiError] = useState<string | null>(null);
+
   const recordId = stableRecordId(matchKey, teamKey, user?.id ?? "anon");
+  const clipKey = `${matchKey}:${teamKey}`;
 
   useEffect(() => {
     if (match) setVideoUrl((current) => current ?? match.videoUrl ?? null);
@@ -52,6 +60,23 @@ function ScoutMatchPage() {
     });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recordId]);
+
+  useEffect(() => {
+    getLocalClip(clipKey).then((clip) => {
+      if (clip) setClipBlob(clip.blob);
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [clipKey]);
+
+  useEffect(() => {
+    if (!clipBlob) {
+      setClipPreviewUrl(null);
+      return;
+    }
+    const url = URL.createObjectURL(clipBlob);
+    setClipPreviewUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [clipBlob]);
 
   if (!eventData || !season || !draftLoaded) return <p className="muted">Loading…</p>;
   if (!match || !team) return <p className="error-text">Match or team not found.</p>;
@@ -95,6 +120,35 @@ function ScoutMatchPage() {
     await trpcClient.event.setMatchVideoUrl.mutate({ matchKey, videoUrl });
   }
 
+  async function handleClipRecorded(blob: Blob) {
+    setClipBlob(blob);
+    setAiStatus("idle");
+    setAiError(null);
+    await saveLocalClip(clipKey, blob);
+  }
+
+  async function handleAnalyzeWithAi() {
+    if (!clipBlob) return;
+    setAiStatus("analyzing");
+    setAiError(null);
+    try {
+      const frames = await extractFrames(clipBlob, 20);
+      const result = await trpcClient.scouting.analyzeVideo.mutate({
+        matchKey,
+        scoutedTeamKey: teamKey,
+        allianceColor,
+        station,
+        frames,
+      });
+      setData((prev) => ({ ...prev, ...result.data }));
+      setNotes((prev) => (prev ? `${prev}\n\nAI draft: ${result.notes}` : `AI draft: ${result.notes}`));
+      setAiStatus("done");
+    } catch (err) {
+      setAiStatus("error");
+      setAiError(err instanceof Error ? err.message : String(err));
+    }
+  }
+
   return (
     <div className="page">
       <h1>
@@ -115,6 +169,25 @@ function ScoutMatchPage() {
         />
       </div>
       <VideoPanel ref={videoRef} videoUrl={videoUrl} />
+
+      <h3>Or record from this device&apos;s camera</h3>
+      <p className="muted">
+        Nothing leaves your device except a handful of sampled frames, and only if you tap &quot;Analyze with
+        AI&quot; — the recording itself is never uploaded.
+      </p>
+      <CameraRecorder onRecorded={handleClipRecorded} />
+      {clipPreviewUrl && (
+        <div className="card">
+          <video src={clipPreviewUrl} controls playsInline style={{ width: "100%", borderRadius: "8px" }} />
+          <div className="card-row" style={{ marginTop: "0.5rem" }}>
+            <button type="button" className="button primary" onClick={handleAnalyzeWithAi} disabled={aiStatus === "analyzing"}>
+              {aiStatus === "analyzing" ? "Analyzing…" : "Analyze with AI"}
+            </button>
+          </div>
+          {aiStatus === "done" && <p style={{ color: "var(--success)" }}>Draft filled in below — review it before saving.</p>}
+          {aiStatus === "error" && aiError && <p className="error-text">{aiError}</p>}
+        </div>
+      )}
 
       <DynamicScoutForm gameSchema={gameSchema} data={data} onElementChange={handleElementChange} />
 
