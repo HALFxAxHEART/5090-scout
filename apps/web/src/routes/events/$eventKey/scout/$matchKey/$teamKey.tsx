@@ -89,7 +89,9 @@ function ScoutMatchPage() {
   }
 
   async function handleVideoUrlSave() {
-    if (!videoUrl) return;
+    // Only a genuine edit counts as a manual override — don't mark TBA's own URL as
+    // manual just because the scout clicked into the field and back out.
+    if (videoUrl === (match?.videoUrl ?? null)) return;
     await trpcClient.event.setMatchVideoUrl.mutate({ matchKey, videoUrl });
   }
 

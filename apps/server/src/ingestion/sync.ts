@@ -101,6 +101,14 @@ export async function ingestEvent(eventKey: string): Promise<void> {
   const matches = await tbaClient.getEventMatches(eventKey);
   for (const match of matches) {
     const videoUrl = tbaVideoToUrl(match.videos?.[0]);
+
+    const [existing] = await db
+      .select({ videoUrlIsManual: schema.matches.videoUrlIsManual })
+      .from(schema.matches)
+      .where(eq(schema.matches.key, match.key))
+      .limit(1);
+    const preserveManualVideo = existing?.videoUrlIsManual === true;
+
     await db
       .insert(schema.matches)
       .values({
@@ -126,8 +134,8 @@ export async function ingestEvent(eventKey: string): Promise<void> {
           winningAlliance: match.winning_alliance || null,
           scoreBreakdown: match.score_breakdown,
           actualTime: match.actual_time ? new Date(match.actual_time * 1000) : null,
-          // Don't clobber a manually-entered video URL with a null from TBA.
-          ...(videoUrl ? { videoUrl } : {}),
+          // A human-set video URL wins over whatever TBA has, forever, until they clear it.
+          ...(preserveManualVideo ? {} : { videoUrl }),
           updatedAt: new Date(),
         },
       });

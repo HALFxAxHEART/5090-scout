@@ -1,0 +1,1 @@
+ALTER TABLE "matches" ADD COLUMN "video_url_is_manual" boolean DEFAULT false NOT NULL;

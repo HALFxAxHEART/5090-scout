@@ -28,10 +28,14 @@ export async function getEventDetail(eventKey: string) {
   return { event, teams: teams.map((t) => t.team), matches };
 }
 
+/**
+ * A human-set URL always wins over TBA's on future ingests. Clearing it (null) hands
+ * control back to TBA so the next ingest can repopulate it.
+ */
 export async function setMatchVideoUrl(matchKey: string, videoUrl: string | null) {
   const [match] = await db
     .update(schema.matches)
-    .set({ videoUrl, updatedAt: new Date() })
+    .set({ videoUrl, videoUrlIsManual: videoUrl !== null, updatedAt: new Date() })
     .where(eq(schema.matches.key, matchKey))
     .returning();
   if (!match) throw new NotFoundError("Match");

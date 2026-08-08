@@ -1,4 +1,4 @@
-import { date, index, integer, jsonb, numeric, pgTable, primaryKey, text, timestamp, unique } from "drizzle-orm/pg-core";
+import { boolean, date, index, integer, jsonb, numeric, pgTable, primaryKey, text, timestamp, unique } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
 /**
@@ -74,6 +74,9 @@ export const matches = pgTable(
     // TBA-provided when available (its `videos` array); otherwise filled in manually by
     // a scout/admin so the video-assisted entry form has something to embed.
     videoUrl: text("video_url"),
+    // Once a human sets a video URL, ingestion leaves it alone even if TBA later
+    // supplies its own — otherwise every re-ingest would clobber a manual override.
+    videoUrlIsManual: boolean("video_url_is_manual").notNull().default(false),
     updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (t) => [index("matches_event_idx").on(t.eventKey)],
