@@ -1,0 +1,24 @@
+{
+  "name": "@scout5090/server",
+  "private": true,
+  "type": "module",
+  "main": "src/trpc/router.ts",
+  "types": "src/trpc/router.ts",
+  "scripts": {
+    "dev": "bun --watch src/index.ts",
+    "build": "bun build src/index.ts --target bun --outdir dist",
+    "start": "bun src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@scout5090/db": "workspace:*",
+    "@scout5090/shared": "workspace:*",
+    "@trpc/server": "11.18.0",
+    "drizzle-orm": "0.45.2",
+    "zod": "4.4.3"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "@types/bun": "latest"
+  }
+}
