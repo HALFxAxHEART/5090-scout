@@ -101,23 +101,43 @@ export function FieldCanvas({ strokes, color, readOnly, onStrokeComplete }: Fiel
 }
 
 /**
- * Generic FRC field outline (54x27ft rectangle, two 3-driver-station alliance zones) —
- * placeholder art since the 2027 field hasn't been revealed at Kickoff yet. Swap this
- * once it has, same as the per-season game schema in packages/shared/src/games.
+ * Approximate 2026 REBUILT field schematic — real zone names/roles (HUB, TOWER, DEPOT,
+ * OUTPOST, NEUTRAL ZONE, ALLIANCE AREA) from the same public post-kickoff summaries as
+ * the Kickoff app's GAME_2026_REBUILT breakdown. Only the Neutral Zone's size is a real
+ * cited dimension (206in x 72in against a standard ~54x27ft field); everything else's
+ * exact placement is illustrative, not the certified field — swap for real field art
+ * once it's published. See the "approximate schematic" caption shown under the canvas.
  */
 function FieldOutline() {
   return (
     <svg viewBox="0 0 540 270" className="field-outline" preserveAspectRatio="none">
       <rect x="1" y="1" width="538" height="268" fill="#0b1220" stroke="#263049" strokeWidth="2" />
-      <rect x="1" y="1" width="60" height="268" fill="#7f1d1d33" />
-      <rect x="479" y="1" width="60" height="268" fill="#1e3a8a33" />
-      {[0, 1, 2].map((i) => (
-        <line key={`r${i}`} x1="30" y1={i * 90 + 5} x2="30" y2={i * 90 + 85} stroke="#7f1d1d" strokeWidth="2" />
-      ))}
-      {[0, 1, 2].map((i) => (
-        <line key={`b${i}`} x1="510" y1={i * 90 + 5} x2="510" y2={i * 90 + 85} stroke="#1e3a8a" strokeWidth="2" />
-      ))}
-      <line x1="270" y1="1" x2="270" y2="269" stroke="#263049" strokeWidth="1" strokeDasharray="4 4" />
+
+      {/* Red alliance (left) */}
+      <rect x="1" y="1" width="36" height="268" fill="#7f1d1d33" />
+      <rect x="40" y="8" width="55" height="62" fill="none" stroke="#7f1d1d" strokeWidth="1.5" />
+      <text x="67" y="43" className="field-label" textAnchor="middle">DEPOT</text>
+      <rect x="40" y="200" width="55" height="62" fill="none" stroke="#7f1d1d" strokeWidth="1.5" />
+      <text x="67" y="235" className="field-label" textAnchor="middle">OUTPOST</text>
+      <circle cx="125" cy="135" r="26" fill="none" stroke="#7f1d1d" strokeWidth="1.5" />
+      <text x="125" y="139" className="field-label" textAnchor="middle">HUB</text>
+      <rect x="155" y="20" width="27" height="230" fill="none" stroke="#7f1d1d" strokeWidth="1.5" />
+      <text x="168" y="139" className="field-label" textAnchor="middle" transform="rotate(-90 168 139)">TOWER</text>
+
+      {/* Blue alliance (right), mirrored */}
+      <rect x="503" y="1" width="36" height="268" fill="#1e3a8a33" />
+      <rect x="445" y="8" width="55" height="62" fill="none" stroke="#1e3a8a" strokeWidth="1.5" />
+      <text x="472" y="43" className="field-label" textAnchor="middle">DEPOT</text>
+      <rect x="445" y="200" width="55" height="62" fill="none" stroke="#1e3a8a" strokeWidth="1.5" />
+      <text x="472" y="235" className="field-label" textAnchor="middle">OUTPOST</text>
+      <circle cx="415" cy="135" r="26" fill="none" stroke="#1e3a8a" strokeWidth="1.5" />
+      <text x="415" y="139" className="field-label" textAnchor="middle">HUB</text>
+      <rect x="358" y="20" width="27" height="230" fill="none" stroke="#1e3a8a" strokeWidth="1.5" />
+      <text x="371" y="139" className="field-label" textAnchor="middle" transform="rotate(-90 371 139)">TOWER</text>
+
+      {/* Neutral zone — sized from the cited ~206in x 72in against a standard 54x27ft field */}
+      <rect x="184" y="105" width="172" height="60" fill="#26304955" stroke="#263049" strokeWidth="1.5" strokeDasharray="4 4" />
+      <text x="270" y="139" className="field-label" textAnchor="middle">NEUTRAL ZONE</text>
     </svg>
   );
 }

@@ -131,6 +131,10 @@ export function StrategyBoardPage({ eventKey, matchKey }: { eventKey: string; ma
       </div>
 
       <FieldCanvas strokes={boardData[phase]} color={color} onStrokeComplete={addStroke} readOnly={!user} />
+      <p className="muted" style={{ fontSize: "0.8rem", marginTop: "0.35rem" }}>
+        Approximate REBUILT field schematic from public post-Kickoff summaries, not the certified field — zone
+        placement is illustrative.
+      </p>
 
       <div className="card-row strategy-controls">
         <button type="button" className="button" onClick={undo} disabled={!user || boardData[phase].length === 0}>

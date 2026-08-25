@@ -489,6 +489,14 @@ button:disabled {
   cursor: crosshair;
 }
 
+.field-label {
+  fill: var(--muted);
+  font-size: 9px;
+  letter-spacing: 0.03em;
+  pointer-events: none;
+  user-select: none;
+}
+
 .strategy-controls {
   margin-top: 0.75rem;
   flex-wrap: wrap;
