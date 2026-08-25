@@ -14,9 +14,12 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SyncRouteImport } from './routes/sync'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as AdminScoutProgressRouteImport } from './routes/admin/scout-progress'
 import { Route as EventsIndexRouteImport } from './routes/events/index'
 import { Route as EventsEventKeyIndexRouteImport } from './routes/events/$eventKey/index'
+import { Route as EventsEventKeyDashboardRouteImport } from './routes/events/$eventKey/dashboard'
 import { Route as EventsEventKeyPickListRouteImport } from './routes/events/$eventKey/pick-list'
+import { Route as EventsEventKeyStrategyMatchKeyRouteImport } from './routes/events/$eventKey/strategy/$matchKey'
 import { Route as EventsEventKeyScoutMatchKeyTeamKeyRouteImport } from './routes/events/$eventKey/scout/$matchKey/$teamKey'
 
 const IndexRoute = IndexRouteImport.update({
@@ -44,6 +47,11 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
   path: '/admin/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminScoutProgressRoute = AdminScoutProgressRouteImport.update({
+  id: '/admin/scout-progress',
+  path: '/admin/scout-progress',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EventsIndexRoute = EventsIndexRouteImport.update({
   id: '/events/',
   path: '/events/',
@@ -54,11 +62,22 @@ const EventsEventKeyIndexRoute = EventsEventKeyIndexRouteImport.update({
   path: '/events/$eventKey/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EventsEventKeyDashboardRoute = EventsEventKeyDashboardRouteImport.update({
+  id: '/events/$eventKey/dashboard',
+  path: '/events/$eventKey/dashboard',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const EventsEventKeyPickListRoute = EventsEventKeyPickListRouteImport.update({
   id: '/events/$eventKey/pick-list',
   path: '/events/$eventKey/pick-list',
   getParentRoute: () => rootRouteImport,
 } as any)
+const EventsEventKeyStrategyMatchKeyRoute =
+  EventsEventKeyStrategyMatchKeyRouteImport.update({
+    id: '/events/$eventKey/strategy/$matchKey',
+    path: '/events/$eventKey/strategy/$matchKey',
+    getParentRoute: () => rootRouteImport,
+  } as any)
 const EventsEventKeyScoutMatchKeyTeamKeyRoute =
   EventsEventKeyScoutMatchKeyTeamKeyRouteImport.update({
     id: '/events/$eventKey/scout/$matchKey/$teamKey',
@@ -71,10 +90,13 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/sync': typeof SyncRoute
+  '/admin/scout-progress': typeof AdminScoutProgressRoute
   '/admin/': typeof AdminIndexRoute
   '/events/': typeof EventsIndexRoute
+  '/events/$eventKey/dashboard': typeof EventsEventKeyDashboardRoute
   '/events/$eventKey/pick-list': typeof EventsEventKeyPickListRoute
   '/events/$eventKey/': typeof EventsEventKeyIndexRoute
+  '/events/$eventKey/strategy/$matchKey': typeof EventsEventKeyStrategyMatchKeyRoute
   '/events/$eventKey/scout/$matchKey/$teamKey': typeof EventsEventKeyScoutMatchKeyTeamKeyRoute
 }
 export interface FileRoutesByTo {
@@ -82,10 +104,13 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/sync': typeof SyncRoute
+  '/admin/scout-progress': typeof AdminScoutProgressRoute
   '/admin': typeof AdminIndexRoute
   '/events': typeof EventsIndexRoute
+  '/events/$eventKey/dashboard': typeof EventsEventKeyDashboardRoute
   '/events/$eventKey/pick-list': typeof EventsEventKeyPickListRoute
   '/events/$eventKey': typeof EventsEventKeyIndexRoute
+  '/events/$eventKey/strategy/$matchKey': typeof EventsEventKeyStrategyMatchKeyRoute
   '/events/$eventKey/scout/$matchKey/$teamKey': typeof EventsEventKeyScoutMatchKeyTeamKeyRoute
 }
 export interface FileRoutesById {
@@ -94,10 +119,13 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
   '/sync': typeof SyncRoute
+  '/admin/scout-progress': typeof AdminScoutProgressRoute
   '/admin/': typeof AdminIndexRoute
   '/events/': typeof EventsIndexRoute
+  '/events/$eventKey/dashboard': typeof EventsEventKeyDashboardRoute
   '/events/$eventKey/pick-list': typeof EventsEventKeyPickListRoute
   '/events/$eventKey/': typeof EventsEventKeyIndexRoute
+  '/events/$eventKey/strategy/$matchKey': typeof EventsEventKeyStrategyMatchKeyRoute
   '/events/$eventKey/scout/$matchKey/$teamKey': typeof EventsEventKeyScoutMatchKeyTeamKeyRoute
 }
 export interface FileRouteTypes {
@@ -107,10 +135,13 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/sync'
+    | '/admin/scout-progress'
     | '/admin/'
     | '/events/'
+    | '/events/$eventKey/dashboard'
     | '/events/$eventKey/pick-list'
     | '/events/$eventKey/'
+    | '/events/$eventKey/strategy/$matchKey'
     | '/events/$eventKey/scout/$matchKey/$teamKey'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -118,10 +149,13 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/sync'
+    | '/admin/scout-progress'
     | '/admin'
     | '/events'
+    | '/events/$eventKey/dashboard'
     | '/events/$eventKey/pick-list'
     | '/events/$eventKey'
+    | '/events/$eventKey/strategy/$matchKey'
     | '/events/$eventKey/scout/$matchKey/$teamKey'
   id:
     | '__root__'
@@ -129,10 +163,13 @@ export interface FileRouteTypes {
     | '/login'
     | '/signup'
     | '/sync'
+    | '/admin/scout-progress'
     | '/admin/'
     | '/events/'
+    | '/events/$eventKey/dashboard'
     | '/events/$eventKey/pick-list'
     | '/events/$eventKey/'
+    | '/events/$eventKey/strategy/$matchKey'
     | '/events/$eventKey/scout/$matchKey/$teamKey'
   fileRoutesById: FileRoutesById
 }
@@ -141,10 +178,13 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   SignupRoute: typeof SignupRoute
   SyncRoute: typeof SyncRoute
+  AdminScoutProgressRoute: typeof AdminScoutProgressRoute
   AdminIndexRoute: typeof AdminIndexRoute
   EventsIndexRoute: typeof EventsIndexRoute
+  EventsEventKeyDashboardRoute: typeof EventsEventKeyDashboardRoute
   EventsEventKeyPickListRoute: typeof EventsEventKeyPickListRoute
   EventsEventKeyIndexRoute: typeof EventsEventKeyIndexRoute
+  EventsEventKeyStrategyMatchKeyRoute: typeof EventsEventKeyStrategyMatchKeyRoute
   EventsEventKeyScoutMatchKeyTeamKeyRoute: typeof EventsEventKeyScoutMatchKeyTeamKeyRoute
 }
 
@@ -185,6 +225,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/scout-progress': {
+      id: '/admin/scout-progress'
+      path: '/admin/scout-progress'
+      fullPath: '/admin/scout-progress'
+      preLoaderRoute: typeof AdminScoutProgressRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/events/': {
       id: '/events/'
       path: '/events'
@@ -199,11 +246,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof EventsEventKeyIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/events/$eventKey/dashboard': {
+      id: '/events/$eventKey/dashboard'
+      path: '/events/$eventKey/dashboard'
+      fullPath: '/events/$eventKey/dashboard'
+      preLoaderRoute: typeof EventsEventKeyDashboardRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/events/$eventKey/pick-list': {
       id: '/events/$eventKey/pick-list'
       path: '/events/$eventKey/pick-list'
       fullPath: '/events/$eventKey/pick-list'
       preLoaderRoute: typeof EventsEventKeyPickListRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/events/$eventKey/strategy/$matchKey': {
+      id: '/events/$eventKey/strategy/$matchKey'
+      path: '/events/$eventKey/strategy/$matchKey'
+      fullPath: '/events/$eventKey/strategy/$matchKey'
+      preLoaderRoute: typeof EventsEventKeyStrategyMatchKeyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/events/$eventKey/scout/$matchKey/$teamKey': {
@@ -221,10 +282,13 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   SignupRoute: SignupRoute,
   SyncRoute: SyncRoute,
+  AdminScoutProgressRoute: AdminScoutProgressRoute,
   AdminIndexRoute: AdminIndexRoute,
   EventsIndexRoute: EventsIndexRoute,
+  EventsEventKeyDashboardRoute: EventsEventKeyDashboardRoute,
   EventsEventKeyPickListRoute: EventsEventKeyPickListRoute,
   EventsEventKeyIndexRoute: EventsEventKeyIndexRoute,
+  EventsEventKeyStrategyMatchKeyRoute: EventsEventKeyStrategyMatchKeyRoute,
   EventsEventKeyScoutMatchKeyTeamKeyRoute:
     EventsEventKeyScoutMatchKeyTeamKeyRoute,
 }

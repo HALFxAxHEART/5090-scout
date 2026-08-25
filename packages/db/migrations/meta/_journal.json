@@ -15,6 +15,13 @@
       "when": 1786221458213,
       "tag": "0001_elite_tigra",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1787667495558,
+      "tag": "0002_low_stick",
+      "breakpoints": true
     }
   ]
 }

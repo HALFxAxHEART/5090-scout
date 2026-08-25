@@ -20,9 +20,14 @@ function EventDetailPage() {
     <div className="page">
       <div className="card-row">
         <h1>{data.event.name}</h1>
-        <Link to="/events/$eventKey/pick-list" params={{ eventKey }} className="button-link primary">
-          Pick List
-        </Link>
+        <div className="card-row" style={{ gap: "0.5rem" }}>
+          <Link to="/events/$eventKey/dashboard" params={{ eventKey }} className="button-link">
+            Dashboard
+          </Link>
+          <Link to="/events/$eventKey/pick-list" params={{ eventKey }} className="button-link primary">
+            Pick List
+          </Link>
+        </div>
       </div>
       <p className="muted">
         {data.teams.length} teams · {data.matches.length} matches
@@ -36,11 +41,20 @@ function EventDetailPage() {
             <strong>
               {match.compLevel.toUpperCase()} {match.matchNumber}
             </strong>
-            {match.redScore !== null && match.blueScore !== null && (
-              <span className="muted">
-                {match.redScore} – {match.blueScore}
-              </span>
-            )}
+            <div className="card-row" style={{ gap: "0.5rem" }}>
+              {match.redScore !== null && match.blueScore !== null && (
+                <span className="muted">
+                  {match.redScore} – {match.blueScore}
+                </span>
+              )}
+              <Link
+                to="/events/$eventKey/strategy/$matchKey"
+                params={{ eventKey, matchKey: match.key }}
+                className="button-link"
+              >
+                Strategy
+              </Link>
+            </div>
           </div>
           <div className="card-row" style={{ marginTop: "0.5rem", flexWrap: "wrap", gap: "0.4rem" }}>
             {match.redTeams.map((teamKey) => (

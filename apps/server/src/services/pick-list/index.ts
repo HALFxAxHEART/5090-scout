@@ -1,7 +1,8 @@
 import { db, schema } from "@scout5090/db";
 import { and, asc, eq, inArray } from "drizzle-orm";
-import { computeTotalScore, type GameSchema } from "@scout5090/shared";
+import type { GameSchema } from "@scout5090/shared";
 import { NotFoundError } from "../../lib/errors";
+import { computeScoutedAverages } from "../scouting-stats";
 
 async function seedEntriesIfEmpty(eventKey: string) {
   const existing = await db
@@ -77,25 +78,11 @@ export async function getPickList(eventKey: string): Promise<PickListRow[]> {
     .where(and(eq(schema.epaSnapshots.year, event.year), inArray(schema.epaSnapshots.teamKey, teamKeys)));
   const epaByTeam = new Map(epa.map((e) => [e.teamKey, e]));
 
-  const scoutRows = await db
-    .select({ record: schema.scoutingRecords })
-    .from(schema.scoutingRecords)
-    .innerJoin(schema.matches, eq(schema.scoutingRecords.matchKey, schema.matches.key))
-    .where(and(eq(schema.matches.eventKey, eventKey), inArray(schema.scoutingRecords.scoutedTeamKey, teamKeys)));
-
-  const scoutTotalsByTeam = new Map<string, number[]>();
-  if (gameSchema) {
-    for (const { record } of scoutRows) {
-      const total = computeTotalScore(gameSchema, record.data as Record<string, number | boolean | string>);
-      const list = scoutTotalsByTeam.get(record.scoutedTeamKey) ?? [];
-      list.push(total);
-      scoutTotalsByTeam.set(record.scoutedTeamKey, list);
-    }
-  }
+  const scoutedByTeam = await computeScoutedAverages(eventKey, teamKeys, gameSchema);
 
   return entries.map((e) => {
     const epaRow = epaByTeam.get(e.teamKey);
-    const scoutTotals = scoutTotalsByTeam.get(e.teamKey) ?? [];
+    const scouted = scoutedByTeam.get(e.teamKey);
     return {
       teamKey: e.teamKey,
       teamNumber: e.teamNumber,
@@ -106,8 +93,8 @@ export async function getPickList(eventKey: string): Promise<PickListRow[]> {
       tbaRank: rankByTeam.get(e.teamKey) ?? null,
       epaNorm: epaRow?.epaNorm ? Number(epaRow.epaNorm) : null,
       epaTotal: epaRow?.epaTotal ? Number(epaRow.epaTotal) : null,
-      scoutedAvgTotal: scoutTotals.length ? scoutTotals.reduce((a, b) => a + b, 0) / scoutTotals.length : null,
-      scoutedMatchCount: scoutTotals.length,
+      scoutedAvgTotal: scouted?.scoutedAvgTotal ?? null,
+      scoutedMatchCount: scouted?.scoutedMatchCount ?? 0,
     };
   });
 }

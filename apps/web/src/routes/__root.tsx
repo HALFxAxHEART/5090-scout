@@ -27,6 +27,7 @@ function RootLayout() {
           {pendingCount > 0 && <span className="nav-badge">{pendingCount}</span>}
         </Link>
         {user?.role === "admin" && <Link to="/admin">Admin</Link>}
+        {user?.role === "admin" && <Link to="/admin/scout-progress">Scout Progress</Link>}
         <div className="nav-spacer" />
         {isLoading ? null : user ? (
           <span className="nav-user muted">{user.displayName}</span>
